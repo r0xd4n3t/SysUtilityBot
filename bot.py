@@ -534,7 +534,8 @@ def get_last_10_logins() -> str:
 
 def list_open_ports() -> str:
     try:
-        output = subprocess.check_output(['netstat', '-tuln'], text=True, stderr=subprocess.STDOUT)
+        netstat_command = 'netstat -tuln | grep LISTEN | awk \'{print $4}\''
+        output = subprocess.check_output(netstat_command, shell=True, text=True, stderr=subprocess.STDOUT)
         return output.strip()
     except subprocess.CalledProcessError as e:
         return f"Error: {e}"
@@ -847,4 +848,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
