@@ -153,3 +153,6 @@ Note: The commands available to each user level are based on their access privil
 Contributions to SysUtilityBot are welcome! If you find any issues or have ideas for improvements, feel free to open an issue or submit a pull request.
 
 Happy botting! 🤖
+
+
+<p align="center"><a href=#top>Back to Top</a></p>
