@@ -193,6 +193,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
             try:
                 update.message.reply_text("🔄 Updating system...")
 
+                # Declare update_messages as an empty list
                 update_messages = []
 
                 # Helper function to execute a system update command and append the output to messages
@@ -234,7 +235,28 @@ def update_system(update: Update, _: CallbackContext) -> None:
             try:
                 update.message.reply_text("🔄 Updating system...")
 
+                # Declare update_messages as an empty list
                 update_messages = []
+
+                # Helper function to execute a system update command and append the output to messages
+                def execute_update_command(command, description):
+                    try:
+                        process = subprocess.Popen(
+                            command,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                        )
+
+                        output, error = process.communicate()
+
+                        if process.returncode != 0:
+                            update_messages.append(f"⚠️😕 Error occurred while {description}: {error}")
+                        else:
+                            update_messages.append(f"<code>{output}</code>")
+
+                    except Exception as e:
+                        update_messages.append(f"⚠️😕 Error occurred while {description}: {e}")
 
                 execute_update_command(["apt-get", "update", "-y"], "updating the system")
                 execute_update_command(["apt", "upgrade", "-y"], "upgrading the system")
