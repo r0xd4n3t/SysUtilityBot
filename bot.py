@@ -192,66 +192,37 @@ def update_system(update: Update, _: CallbackContext) -> None:
         if user_id == god_chat_id:
             try:
                 update.message.reply_text("🔄 Updating system...")
-                
-                # Use subprocess.Popen to capture the output
-                process = subprocess.Popen(
-                    ["apt-get", "update", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                
-                # Capture the output and error
-                output, error = process.communicate()
-                
-                # Check if there was any error
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    # Send the captured output as the response
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
 
-                process = subprocess.Popen(
-                    ["apt", "upgrade", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
+                update_messages = []
 
-                output, error = process.communicate()
+                # Helper function to execute a system update command and append the output to messages
+                def execute_update_command(command, description):
+                    try:
+                        process = subprocess.Popen(
+                            command,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                        )
 
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
+                        output, error = process.communicate()
 
-                process = subprocess.Popen(
-                    ["apt", "autoremove", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
+                        if process.returncode != 0:
+                            update_messages.append(f"⚠️😕 Error occurred while {description}: {error}")
+                        else:
+                            update_messages.append(f"<code>{output}</code>")
 
-                output, error = process.communicate()
+                    except Exception as e:
+                        update_messages.append(f"⚠️😕 Error occurred while {description}: {e}")
 
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
+                execute_update_command(["apt-get", "update", "-y"], "updating the system")
+                execute_update_command(["apt", "upgrade", "-y"], "upgrading the system")
+                execute_update_command(["apt", "autoremove", "-y"], "removing unused packages")
+                execute_update_command(["apt", "autoclean", "-y"], "cleaning up")
 
-                process = subprocess.Popen(
-                    ["apt", "autoclean", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-
-                output, error = process.communicate()
-
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
+                # Send the captured output as separate messages
+                for message in update_messages:
+                    update.message.reply_text(message, parse_mode="HTML")
 
                 update.message.reply_text("🎉 System update completed.")
             except Exception as e:
@@ -262,66 +233,17 @@ def update_system(update: Update, _: CallbackContext) -> None:
         if user_id in config["admin_ids"] and update.message.chat.id == config["allowed_group"]:
             try:
                 update.message.reply_text("🔄 Updating system...")
-                
-                # Use subprocess.Popen to capture the output
-                process = subprocess.Popen(
-                    ["apt-get", "update", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                
-                # Capture the output and error
-                output, error = process.communicate()
-                
-                # Check if there was any error
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    # Send the captured output as the response
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
 
-                process = subprocess.Popen(
-                    ["apt", "upgrade", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
+                update_messages = []
 
-                output, error = process.communicate()
+                execute_update_command(["apt-get", "update", "-y"], "updating the system")
+                execute_update_command(["apt", "upgrade", "-y"], "upgrading the system")
+                execute_update_command(["apt", "autoremove", "-y"], "removing unused packages")
+                execute_update_command(["apt", "autoclean", "-y"], "cleaning up")
 
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
-
-                process = subprocess.Popen(
-                    ["apt", "autoremove", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-
-                output, error = process.communicate()
-
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
-
-                process = subprocess.Popen(
-                    ["apt", "autoclean", "-y"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-
-                output, error = process.communicate()
-
-                if process.returncode != 0:
-                    update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {error}")
-                else:
-                    update.message.reply_text(f"<code>{output}</code>", parse_mode="HTML")
+                # Send the captured output as separate messages
+                for message in update_messages:
+                    update.message.reply_text(message, parse_mode="HTML")
 
                 update.message.reply_text("🎉 System update completed.")
             except Exception as e:
