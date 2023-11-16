@@ -224,6 +224,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
                 # Send the captured output as separate messages
                 for message in update_messages:
                     update.message.reply_text(message, parse_mode="HTML")
+                    time.sleep(5)  # Introduce a 5-second delay
 
                 update.message.reply_text("🎉 System update completed.")
             except Exception as e:
