@@ -25,8 +25,10 @@ def save_config(config):
 config = load_config()
 god_chat_id = config["god_chat_id"]
 
-def greet_on_startup(bot: Bot, god_chat_id: int) -> None:
-    bot.send_message(chat_id=god_chat_id, text="👋 I'm back!")
+def greet_on_startup(bot: Bot, god_chat_ids: List[int]) -> None:
+    greeting_message = "👋 I'm back!"
+    for chat_id in god_chat_ids:
+        bot.send_message(chat_id=chat_id, text=greeting_message)
 
 # Define a function to handle the API calls and retry on NetworkError
 def safe_send_message(bot, chat_id, text, parse_mode=None):
@@ -118,7 +120,7 @@ def help_command(update: Update, _: CallbackContext) -> None:
     chat_id = update.message.chat_id
 
     if update.message.chat.type == "private":
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             help_text = (
                 "🌟🤖 Welcome to the Bot - Help Menu! 🌟🤖\n\n"
                 "Available commands for GOD user in private messages:\n"
@@ -189,7 +191,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
     user_id = update.message.from_user.id
 
     if update.message.chat.type == "private":
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             try:
                 update.message.reply_text("🔄 Updating system...")
 
@@ -280,7 +282,7 @@ def add_user(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
     
     if update.message.chat.type == "private":
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             args = context.args
             if args:
                 new_user_id = int(args[0])
@@ -322,7 +324,7 @@ def remove_user(update: Update, context: CallbackContext) -> None:
     
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             args = context.args
             if args:
                 user_id_to_remove = int(args[0])
@@ -365,7 +367,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
     
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             args = context.args
             if args:
                 new_admin_id = int(args[0])
@@ -408,7 +410,7 @@ def remove_admin(update: Update, context: CallbackContext) -> None:
     
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             args = context.args
             if args:
                 admin_id_to_remove = int(args[0])
@@ -490,7 +492,7 @@ def system_info(update: Update, _: CallbackContext) -> None:
     user_id = update.message.from_user.id
 
     if update.message.chat.type == "private":
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             update.message.reply_text("⏳ Please wait while I gather system information...")
             with os.popen('hostname') as hostname_output:
                 hostname = hostname_output.read().strip()
@@ -671,7 +673,7 @@ def run_command(update: Update, context: CallbackContext) -> None:
         except subprocess.CalledProcessError as e:
             return f"Error: {e}"
 
-    if user_id == god_chat_id:
+    if user_id in config["god_chat_id"]:
         # Condition 3: Allow the command for the specific god_chat_id user
         args = context.args
         if args:
@@ -720,7 +722,7 @@ def run_command(update: Update, context: CallbackContext) -> None:
 def list_admin(update: Update, _: CallbackContext) -> None:
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             admin_ids_list = "\n".join(str(admin_id) for admin_id in config["admin_ids"])
             update.message.reply_text(f"<code>{admin_ids_list}</code>", parse_mode="HTML")
         else:
@@ -739,7 +741,7 @@ def list_admin(update: Update, _: CallbackContext) -> None:
 def list_user(update: Update, _: CallbackContext) -> None:
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
-        if user_id == god_chat_id:
+        if user_id in config["god_chat_id"]:
             user_ids_list = "\n".join(str(user_id) for user_id in config["user_ids"])
             if user_ids_list:
                 update.message.reply_text(f"<code>{user_ids_list}</code>", parse_mode="HTML")
