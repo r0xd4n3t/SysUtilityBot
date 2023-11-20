@@ -67,14 +67,14 @@ sudo nano /etc/systemd/system/sysutilitybot.service
 Add the following content to the sysutilitybot.service file:
 ```
 [Unit]
-Description=SysUtilityBot Telegram Bot
+Description=Bot Maintenance Service
 After=network.target
 
 [Service]
-User=your_username  # Replace 'your_username' with your system username
-WorkingDirectory=/path/to/SysUtilityBot  # Replace '/path/to/SysUtilityBot' with the actual path
+User=root # Replace 'your_username' with your system username
+WorkingDirectory=/root/maintenance # Replace '/path/to/SysUtilityBot' with the actual path
 ExecStart=/usr/bin/python3.10 bot.py
-Restart=always
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
