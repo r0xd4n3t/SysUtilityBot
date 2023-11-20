@@ -9,5 +9,8 @@
         USER1,
         USER2
     ],
-    "god_chat_id": YOUR_GOD_CHAT_ID
+    "god_chat_id": [
+        GOD1_ID,
+        GOD2_ID
+    ]
 }
