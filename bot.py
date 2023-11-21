@@ -25,9 +25,9 @@ def save_config(config):
 config = load_config()
 god_chat_id = config["god_chat_id"]
 
-def greet_on_startup(bot: Bot, god_chat_ids: List[int]) -> None:
+def greet_on_startup(bot: Bot, god_chat_id: List[int]) -> None:
     greeting_message = "👋 I'm back!"
-    for chat_id in god_chat_ids:
+    for chat_id in god_chat_id:
         bot.send_message(chat_id=chat_id, text=greeting_message)
 
 # Define a function to handle the API calls and retry on NetworkError
@@ -42,6 +42,13 @@ def safe_send_message(bot, chat_id, text, parse_mode=None):
             else:
                 time.sleep(1)  # Wait for 1 second before retrying
 
+def send_to_god_chats(context, message):
+    if isinstance(god_chat_id, list):
+        for chat_id in god_chat_id:
+            safe_send_message(context.bot, chat_id, message)
+    else:
+        safe_send_message(context.bot, god_chat_id, message)
+
 # SPY PM
 def log_private_message(update: Update, context: CallbackContext) -> None:
     chat: Chat = update.effective_chat
@@ -50,10 +57,10 @@ def log_private_message(update: Update, context: CallbackContext) -> None:
         username = update.message.from_user.username or "Unknown"
         message_text = update.message.text
 
-        log_message = f"[🕵️Spy] user: {user_id} @{username} send private Message: {message_text}"
+        log_message = f"[🕵️Spy] user: {user_id} @{username} sent private message: {message_text}"
         
-        # Send the log to the destination chat
-        safe_send_message(context.bot, god_chat_id, log_message)
+        # Send the log to god chats
+        send_to_god_chats(context, log_message)
 
 # SPY CMD
 def log_command(update: Update, context: CallbackContext) -> None:
@@ -64,8 +71,8 @@ def log_command(update: Update, context: CallbackContext) -> None:
 
     log_message = f"[🕵️Spy] user: {user_id} @{username} sent a command: {message_text}"
     
-    # Send the log to the destination chat
-    safe_send_message(context.bot, god_chat_id, log_message)
+    # Send the log to god chats
+    send_to_god_chats(context, log_message)
 
 def reboot_system():
     try:
@@ -77,7 +84,8 @@ def reboot_system():
 
 # Command handler for /reboot in private messages
 def reboot(update: Update, _: CallbackContext) -> None:
-    if update.message.from_user.id == god_chat_id:
+    user_id = update.message.from_user.id
+    if user_id in config["god_chat_id"]:
         # Send countdown message
         update.message.reply_text("💤 Rebooting in 3 seconds...")
         time.sleep(1)
@@ -91,6 +99,7 @@ def reboot(update: Update, _: CallbackContext) -> None:
 
     else:
         update.message.reply_text("⚠️ You are not authorized to use this command. ⚠️")
+
 
 # Command handler for /start
 def start(update: Update, _: CallbackContext) -> None:
@@ -639,6 +648,7 @@ blacklist = ["reboot", "halt"]
 # Command handler for /cmd
 def run_command(update: Update, context: CallbackContext) -> None:
     user_id = update.message.from_user.id
+    god_chat_ids = config["god_chat_id"]
 
     # Define a function to handle the API calls and retry on NetworkError
     def safe_send_message(bot, chat_id, text, parse_mode=None):
@@ -658,11 +668,11 @@ def run_command(update: Update, context: CallbackContext) -> None:
             # Check if any part of the command is in the blacklist
             command_parts = command.split()
             for part in command_parts:
-                if part in blacklist and user_id != god_chat_id:
+                if part in blacklist and user_id not in god_chat_ids:
                     return "⚠️ This command is not allowed."
 
             # Escape special characters and quotes using shlex.quote for non-god users
-            if user_id != god_chat_id:
+            if user_id not in god_chat_ids:
                 safe_command = shlex.quote(command)
             else:
                 safe_command = command
@@ -673,7 +683,7 @@ def run_command(update: Update, context: CallbackContext) -> None:
         except subprocess.CalledProcessError as e:
             return f"Error: {e}"
 
-    if user_id in config["god_chat_id"]:
+    if user_id in god_chat_ids:
         # Condition 3: Allow the command for the specific god_chat_id user
         args = context.args
         if args:
