@@ -54,25 +54,29 @@ def log_private_message(update: Update, context: CallbackContext) -> None:
     chat: Chat = update.effective_chat
     if chat.type == Chat.PRIVATE:
         user_id = update.message.from_user.id
-        username = update.message.from_user.username or "Unknown"
-        message_text = update.message.text
-
-        log_message = f"[🕵️Spy] user: {user_id} @{username} sent private message: {message_text}"
         
-        # Send the log to god chats
-        send_to_god_chats(context, log_message)
+        if user_id not in config["god_chat_id"]: # Check if the user_id is not the god_chat_id
+            username = update.message.from_user.username or "Unknown"
+            message_text = update.message.text
+
+            log_message = f"[🕵️Spy] user: {user_id} @{username} sent private message: {message_text}"
+        
+            # Send the log to god chats
+            send_to_god_chats(context, log_message)
 
 # SPY CMD
 def log_command(update: Update, context: CallbackContext) -> None:
     chat: Chat = update.effective_chat
     user_id = update.message.from_user.id
-    username = update.message.from_user.username or "Unknown"
-    message_text = update.message.text
 
-    log_message = f"[🕵️Spy] user: {user_id} @{username} sent a command: {message_text}"
+    if user_id not in config["god_chat_id"]: # Check if the user_id is not the god_chat_id
+        username = update.message.from_user.username or "Unknown"
+        message_text = update.message.text
+
+        log_message = f"[🕵️Spy] user: {user_id} @{username} sent a command: {message_text}"
     
-    # Send the log to god chats
-    send_to_god_chats(context, log_message)
+        # Send the log to god chats
+        send_to_god_chats(context, log_message)
 
 def reboot_system():
     try:
