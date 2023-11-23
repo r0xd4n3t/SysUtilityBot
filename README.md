@@ -54,7 +54,7 @@ pip3.10 install -r requirements.txt
         USER1,
         USER2
     ],
-    "god_chat_id": YOUR_GOD_CHAT_ID
+    "god_chat_id": [YOUR_GOD_CHAT_ID]
 }
 ```
 Replace YOUR_TELEGRAM_BOT_TOKEN, YOUR_GOD_CHAT_ID, and YOUR_ALLOWED_GROUP_ID with your Telegram bot token, your God chat ID (the Telegram user ID who can use all commands), and the allowed group ID where the bot will be functional.
