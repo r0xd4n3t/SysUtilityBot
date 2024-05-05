@@ -243,7 +243,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
 
                 update.message.reply_text("🎉 System update completed.")
             except Exception as e:
-                update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {e}")
+                update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {e}. Please try running /update again.")
         else:
             update.message.reply_text("⚠️ The /update command is not allowed in private messages.")
     else:
@@ -285,7 +285,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
 
                 update.message.reply_text("🎉 System update completed.")
             except Exception as e:
-                update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {e}")
+                update.message.reply_text(f"⚠️😕 Error occurred while updating the system: {e}. Please try running /update again.")
         else:
             update.message.reply_text("⚠️ You are not authorized to perform this command ! ⚠️")
 
