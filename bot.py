@@ -54,13 +54,13 @@ def log_private_message(update: Update, context: CallbackContext) -> None:
     chat: Chat = update.effective_chat
     if chat.type == Chat.PRIVATE:
         user_id = update.message.from_user.id
-        
+
         if user_id not in config["god_chat_id"]: # Check if the user_id is not the god_chat_id
             username = update.message.from_user.username or "Unknown"
             message_text = update.message.text
 
             log_message = f"[🕵️Spy] user: {user_id} @{username} sent private message: {message_text}"
-        
+
             # Send the log to god chats
             send_to_god_chats(context, log_message)
 
@@ -74,7 +74,7 @@ def log_command(update: Update, context: CallbackContext) -> None:
         message_text = update.message.text
 
         log_message = f"[🕵️Spy] user: {user_id} @{username} sent a command: {message_text}"
-    
+
         # Send the log to god chats
         send_to_god_chats(context, log_message)
 
@@ -293,7 +293,7 @@ def update_system(update: Update, _: CallbackContext) -> None:
 def add_user(update: Update, context: CallbackContext) -> None:
     global config  # Declare config as a global variable to be able to modify it
     user_id = update.message.from_user.id
-    
+
     if update.message.chat.type == "private":
         if user_id in config["god_chat_id"]:
             args = context.args
@@ -334,7 +334,7 @@ def add_user(update: Update, context: CallbackContext) -> None:
 # Command handler for /remove_user
 def remove_user(update: Update, context: CallbackContext) -> None:
     global config  # Declare config as a global variable to be able to modify it
-    
+
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
         if user_id in config["god_chat_id"]:
@@ -377,7 +377,7 @@ def remove_user(update: Update, context: CallbackContext) -> None:
 # Command handler for /add_admin
 def add_admin(update: Update, context: CallbackContext) -> None:
     global config  # Declare config as a global variable to be able to modify it
-    
+
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
         if user_id in config["god_chat_id"]:
@@ -420,7 +420,7 @@ def add_admin(update: Update, context: CallbackContext) -> None:
 # Command handler for /remove_admin
 def remove_admin(update: Update, context: CallbackContext) -> None:
     global config  # Declare config as a global variable to be able to modify it
-    
+
     if update.message.chat.type == "private":
         user_id = update.message.from_user.id
         if user_id in config["god_chat_id"]:
@@ -529,7 +529,7 @@ def system_info(update: Update, _: CallbackContext) -> None:
             who_info = get_who()
             last_logins = get_last_10_logins()
             open_ports = list_open_ports()
-            
+
             # Construct the message
             message = (
                 f"🏠 Hostname: {hostname}\n"
@@ -567,6 +567,7 @@ def system_info(update: Update, _: CallbackContext) -> None:
 
                 # Send each part of the message
                 for part in message_parts:
+                    time.sleep(1)
                     update.message.reply_text(f"<code>{part}</code>", parse_mode="HTML")
 
         else:
@@ -598,7 +599,7 @@ def system_info(update: Update, _: CallbackContext) -> None:
             who_info = get_who()
             last_logins = get_last_10_logins()
             open_ports = list_open_ports()
-            
+
             # Construct the message
             message = (
                 f"🏠 Hostname: {hostname}\n"
@@ -636,7 +637,8 @@ def system_info(update: Update, _: CallbackContext) -> None:
 
                 # Send each part of the message
                 for part in message_parts:
-                    update.message.reply_text(f"<code>{part}</code>", parse_mode="HTML")            
+                    time.sleep(1)
+                    update.message.reply_text(f"<code>{part}</code>", parse_mode="HTML")
 
         else:
             update.message.reply_text("⚠️ You are not allowed to use this command ! ⚠️")
@@ -680,7 +682,7 @@ def run_command(update: Update, context: CallbackContext) -> None:
                 safe_command = shlex.quote(command)
             else:
                 safe_command = command
-            
+
             # Execute the command
             output = subprocess.check_output(safe_command, shell=True, text=True, stderr=subprocess.STDOUT)
             return output
